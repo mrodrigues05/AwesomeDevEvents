@@ -16,7 +16,11 @@ namespace AwesomeDevEvents.API.Controllers
             _context = context;
         }
 
-        // api/dev-events GET
+        /// <summary>
+        /// Obter todos os eventos
+        /// </summary>
+        /// <returns>Coleção de eventos</returns>
+        /// <response code="200">Sucesso</response>
         [HttpGet]
         public IActionResult GetAll() 
         { 
@@ -25,8 +29,17 @@ namespace AwesomeDevEvents.API.Controllers
             return Ok(devEvents);
         }
 
-        // api/dev-events/ 165765416(GUID) GET
+        /// <summary>
+        /// Obter um evento
+        /// </summary>
+        /// <param name="id">Identificador do evento</param>
+        /// <returns>Dados do evento</returns>
+        /// <response code="200">Sucesso</response>
+        /// <response code="400">Não encontrado</response>
+
         [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult GetById(Guid id)
         {
             var devEvent = _context.DevEvents
@@ -41,8 +54,17 @@ namespace AwesomeDevEvents.API.Controllers
             return Ok(devEvent);
         }
 
-        // api/dev-events/ POST
+        /// <summary>
+        /// Cadastrar um evento
+        /// </summary>
+        /// <remarks>
+        /// {"id":"3fa85f64-5717-4562-b3fc-2c963f66afa6","title":"string","description":"string","startDate":"2024-02-26T19:55:50.529Z","endDate":"2024-02-26T19:55:50.529Z"}
+        /// </remarks>
+        /// /// <param name="devEvent">Identificador do evento</param>
+        /// <returns>Objeto recém criado</returns>
+        /// <response code="201">Sucesso</response>
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
         public IActionResult Post(DevEvent devEvent)
         {
             _context.DevEvents.Add(devEvent);
@@ -51,8 +73,20 @@ namespace AwesomeDevEvents.API.Controllers
             return CreatedAtAction(nameof(GetById), new { id = devEvent.Id }, devEvent) ;
         }
 
-        // api/dev-events/ 165765416(GUID) PUT
+        /// <summary>
+        /// Atualizar um evento 
+        /// </summary>
+        /// <remarks>
+        /// {"id":"3fa85f64-5717-4562-b3fc-2c963f66afa6","title":"string","description":"string","startDate":"2024-02-26T19:55:50.529Z","endDate":"2024-02-26T19:55:50.529Z"}
+        /// </remarks>
+        /// <param name="id">Identificador do evento</param>
+        /// <param name="input">Dados do evento</param>
+        /// <returns>Nada.</returns>
+        /// <response code="404">Não encontrado</response>
+        /// <response code="204">Sucesso</response>
         [HttpPut("{id}")]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         public IActionResult Update(Guid id,DevEvent input)
         {
             var devEvent = _context.DevEvents.SingleOrDefault(d => d.Id == id);
@@ -69,8 +103,16 @@ namespace AwesomeDevEvents.API.Controllers
             return NoContent();
         }
 
-        // api/dev-events/ 165765416(GUID) DELETE
+        /// <summary>
+        /// Deletar um evento
+        /// </summary>
+        /// <param name="id">Identificador de evento</param>
+        /// <returns>Nada</returns>
+        /// <response code="404">Não encontrado</response>
+        /// <resonse code="204">Sucesso</resonse>
         [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         public IActionResult Delete(Guid id)
         {
             var devEvent = _context.DevEvents.SingleOrDefault(d => d.Id == id);
@@ -86,8 +128,20 @@ namespace AwesomeDevEvents.API.Controllers
             return NoContent();
         }
 
-        // api/dev-events/ 3fa85f64-5717-4562-b3fc-2c963f66afa6/speakers
+        /// <summary>
+        /// Cadastrar Palestrante
+        /// </summary>
+        /// <remarks>
+        /// {"id":"3fa85f64-5717-4562-b3fc-2c963f66afa6","name":"string","talkTitle":"string","talkDescription":"string","linkedInProfile":"string","devEventId":"3fa85f64-5717-4562-b3fc-2c963f66afa6"}
+        /// </remarks>
+        /// <param name="id">Identificador do evento</param>
+        /// <param name="speaker">Dados do palestrante</param>
+        /// <returns>Nada</returns>
+        /// <response code="404">Evento não encontrado</response>
+        /// <resonse code="204">Sucesso</resonse>
         [HttpPost("{id}/speakers")]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         public IActionResult PostSpeaker(Guid id, DevEventSpeaker speaker)
         {
             speaker.DevEventId = id;
